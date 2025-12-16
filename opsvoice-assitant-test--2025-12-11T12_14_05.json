@@ -1,0 +1,116 @@
+{
+  "title": "OpsVoice Gemini Observability",
+  "description": "Production-grade monitoring for Gemini models integrated with Datadog",
+  "widgets": [
+    {
+      "definition": {
+        "title": "Service Health (Success vs Error)",
+        "type": "timeseries",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "name": "query1",
+                "data_source": "metrics",
+            "query": "avg:trace.opsvoice-backend.duration{service:opsvoice-backend}"
+
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      },
+      "layout": { "x": 0, "y": 0, "width": 4, "height": 2 }
+    },
+    {
+      "definition": {
+        "title": "Model Usage",
+        "type": "toplist",
+        "requests": [
+          {
+            "queries": [
+              {
+                "data_source": "spans",
+                "name": "query1",
+                "query": "count:spans{service:opsvoice-backend}.by{model_name}"
+              }
+            ],
+            "response_format": "scalar",
+            "formulas": [{ "formula": "query1" }]
+          }
+        ]
+      },
+      "layout": { "x": 4, "y": 0, "width": 4, "height": 2 }
+    },
+    {
+      "definition": {
+        "title": "Error Severity Breakdown",
+        "type": "query_table",
+        "requests": [
+          {
+            "queries": [
+              {
+                "data_source": "spans",
+                "name": "query1",
+                "query": "count:spans.error{service:opsvoice-backend}.by{error.level}"
+              }
+            ],
+            "response_format": "scalar",
+            "formulas": [
+              { "formula": "query1", "cell_display_mode": "bar" }
+            ]
+          }
+        ],
+        "has_search_bar": "auto"
+      },
+      "layout": { "x": 8, "y": 0, "width": 4, "height": 4 }
+    },
+    {
+      "definition": {
+        "title": "Response Latency by Model",
+        "type": "timeseries",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+            "name": "query1",
+            "data_source": "metrics",
+            "query": "avg:trace.opsvoice-backend.request.duration{service:opsvoice-backend}.by{model_name}"
+          }
+
+            ],
+            "display_type": "line"
+          }
+        ]
+      },
+      "layout": { "x": 0, "y": 2, "width": 4, "height": 4 }
+    },
+    {
+      "definition": {
+        "title": "Resolution Time (TTR)",
+        "type": "toplist",
+        "requests": [
+          {
+            "queries": [
+              {
+                "data_source": "spans",
+                "name": "query1",
+                "query": "avg:spans.resolution_time_ms{service:opsvoice-backend}.by{error.level}"
+              }
+            ],
+            "response_format": "scalar",
+            "formulas": [{ "formula": "query1" }]
+          }
+        ]
+      },
+      "layout": { "x": 4, "y": 2, "width": 4, "height": 2 }
+    }
+  ],
+  "template_variables": [],
+  "layout_type": "ordered",
+  "notify_list": [],
+  "reflow_type": "fixed",
+  "pause_auto_refresh": false
+}

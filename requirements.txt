@@ -1,0 +1,4 @@
+flask==3.1.2
+ddtrace==3.18.0
+google-cloud-aiplatform==1.38.0
+google-auth==2.27.0

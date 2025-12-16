@@ -1,0 +1,245 @@
+{
+	"title": "opsvoice-assitant-test",
+	"description": null,
+	"widgets": [
+		{
+			"id": 2103075956214833,
+			"definition": {
+				"title": "",
+				"title_size": "16",
+				"title_align": "left",
+				"show_legend": true,
+				"legend_layout": "auto",
+				"legend_columns": [
+					"avg",
+					"min",
+					"max",
+					"value",
+					"sum"
+				],
+				"type": "timeseries",
+				"requests": [
+					{
+						"response_format": "timeseries",
+						"queries": [
+							{
+								"name": "query1",
+								"data_source": "metrics",
+								"query": "avg:system.cpu.user{*}"
+							}
+						],
+						"style": {
+							"palette": "dog_classic",
+							"order_by": "values",
+							"line_type": "solid",
+							"line_width": "normal"
+						},
+						"display_type": "line"
+					}
+				]
+			},
+			"layout": {
+				"x": 0,
+				"y": 0,
+				"width": 4,
+				"height": 2
+			}
+		},
+		{
+			"id": 3587976552243168,
+			"definition": {
+				"title": "",
+				"title_size": "16",
+				"title_align": "left",
+				"type": "toplist",
+				"requests": [
+					{
+						"queries": [
+							{
+								"data_source": "metrics",
+								"name": "query1",
+								"query": "avg:system.cpu.user{*} by {service}",
+								"aggregator": "avg"
+							}
+						],
+						"response_format": "scalar",
+						"formulas": [
+							{
+								"formula": "query1"
+							}
+						],
+						"sort": {
+							"count": 10,
+							"order_by": [
+								{
+									"type": "formula",
+									"index": 0,
+									"order": "desc"
+								}
+							]
+						}
+					}
+				],
+				"style": {
+					"display": {
+						"type": "stacked",
+						"legend": "automatic"
+					}
+				}
+			},
+			"layout": {
+				"x": 4,
+				"y": 0,
+				"width": 4,
+				"height": 2
+			}
+		},
+		{
+			"id": 1505605124285051,
+			"definition": {
+				"title": "",
+				"title_size": "16",
+				"title_align": "left",
+				"type": "query_table",
+				"requests": [
+					{
+						"queries": [
+							{
+								"data_source": "metrics",
+								"name": "query1",
+								"query": "avg:system.cpu.user{*} by {service}",
+								"aggregator": "avg"
+							}
+						],
+						"response_format": "scalar",
+						"sort": {
+							"count": 500,
+							"order_by": [
+								{
+									"type": "formula",
+									"index": 0,
+									"order": "desc"
+								}
+							]
+						},
+						"formulas": [
+							{
+								"formula": "query1",
+								"cell_display_mode": "bar"
+							}
+						]
+					}
+				],
+				"has_search_bar": "auto"
+			},
+			"layout": {
+				"x": 8,
+				"y": 0,
+				"width": 4,
+				"height": 4
+			}
+		},
+		{
+			"id": 3760825825655240,
+			"definition": {
+				"title": "",
+				"title_size": "16",
+				"title_align": "left",
+				"requests": [
+					{
+						"response_format": "scalar",
+						"queries": [
+							{
+								"query": "sum:system.mem.used{*} by {service}",
+								"data_source": "metrics",
+								"name": "query1",
+								"aggregator": "sum"
+							}
+						],
+						"style": {
+							"palette": "datadog16"
+						},
+						"formulas": [
+							{
+								"formula": "query1"
+							}
+						],
+						"sort": {
+							"order_by": [
+								{
+									"type": "formula",
+									"index": 0,
+									"order": "desc"
+								}
+							]
+						}
+					}
+				],
+				"type": "sunburst",
+				"legend": {
+					"type": "automatic"
+				}
+			},
+			"layout": {
+				"x": 0,
+				"y": 2,
+				"width": 4,
+				"height": 4
+			}
+		},
+		{
+			"id": 4248816831411038,
+			"definition": {
+				"title": "",
+				"title_size": "16",
+				"title_align": "left",
+				"type": "toplist",
+				"requests": [
+					{
+						"queries": [
+							{
+								"data_source": "metrics",
+								"name": "query1",
+								"query": "avg:system.cpu.user{*} by {service}",
+								"aggregator": "avg"
+							}
+						],
+						"response_format": "scalar",
+						"formulas": [
+							{
+								"formula": "query1"
+							}
+						],
+						"sort": {
+							"count": 10,
+							"order_by": [
+								{
+									"type": "formula",
+									"index": 0,
+									"order": "desc"
+								}
+							]
+						}
+					}
+				],
+				"style": {
+					"display": {
+						"type": "stacked",
+						"legend": "automatic"
+					}
+				}
+			},
+			"layout": {
+				"x": 4,
+				"y": 2,
+				"width": 4,
+				"height": 2
+			}
+		}
+	],
+	"template_variables": [],
+	"layout_type": "ordered",
+	"notify_list": [],
+	"reflow_type": "fixed",
+	"pause_auto_refresh": false
+}

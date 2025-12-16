@@ -1,0 +1,45 @@
+{
+  "title": "OpsVoice Observability Dashboard",
+  "widgets": [
+    {
+      "definition": {
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "avg:llm.response.latency{env:hackathon-dev} by {service}",
+            "display_type": "line"
+          }
+        ],
+        "title": "LLM Response Latency"
+      }
+    },
+    {
+      "definition": {
+        "type": "query_value",
+        "requests": [
+          {
+            "q": "sum:llm.query.count{env:hackathon-dev}",
+            "aggregator": "sum"
+          }
+        ],
+        "title": "Total LLM Queries"
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "avg:trace.flask.request.duration{env:hackathon-dev} by {service}",
+            "display_type": "line"
+          }
+        ],
+        "title": "Flask Request Latency"
+      }
+    }
+  ],
+  "layout_type": "ordered",
+  "description": "Observability dashboard for OpsVoice Assistant showing latency, query volume, and service health.",
+  "is_read_only": false,
+  "notify_list": []
+}

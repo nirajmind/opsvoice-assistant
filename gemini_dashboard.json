@@ -1,0 +1,99 @@
+{
+  "title": "OpsVoice Gemini Observability",
+  "description": "Production-grade monitoring for Gemini models integrated with Datadog",
+  "widgets": [
+    {
+      "definition": {
+        "title": "Service Health (Success vs Error)",
+        "type": "query_value",
+        "requests": [
+          {
+            "q": "count:trace{service:opsvoice-backend}.by{status}",
+            "aggregator": "sum"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Model Usage",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "count:trace{service:opsvoice-backend}.by{model_name}",
+            "display_type": "bars"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Error Rate Over Time",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "count:trace.error{service:opsvoice-backend}.by{model_name}",
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Error Severity Breakdown",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "count:trace.error{service:opsvoice-backend}.by{error.level}",
+            "display_type": "bars"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Response Latency by Model",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "avg:trace.duration{service:opsvoice-backend}.by{model_name}",
+            "display_type": "heatmap"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Time to Resolution (TTR)",
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "avg:trace.resolution_time_ms{service:opsvoice-backend}.by{error.level}",
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "title": "Active Issues Table",
+        "type": "table",
+        "requests": [
+          {
+            "q": "count:trace.error{service:opsvoice-backend}.by{trace_id,model_name,error.level,status}",
+            "aggregator": "sum"
+          }
+        ],
+        "columns": [
+          "trace_id",
+          "model_name",
+          "error.level",
+          "status",
+          "duration"
+        ]
+      }
+    }
+  ],
+  "layout_type": "ordered",
+  "is_read_only": false
+}
