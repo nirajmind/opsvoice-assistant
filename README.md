@@ -1,7 +1,7 @@
 # OpsVoice Assistant 🚀
 
-An AI-powered backend application built for the **AI Partner Catalyst Hackathon**.  
-This project integrates **Google Cloud Vertex AI / Gemini** with **Datadog APM** to deliver end-to-end observability for an LLM-powered application.
+Voice‑powered AI observability assistant built with **Google Cloud Vertex AI / Gemini** and **Datadog APM**.  
+Built for the **AI Partner Catalyst Hackathon** to showcase end‑to‑end monitoring of an LLM‑powered backend.
 
 ---
 
@@ -9,19 +9,18 @@ This project integrates **Google Cloud Vertex AI / Gemini** with **Datadog APM**
 
 opsvoice-assistant/
 ├── venv/                             # Python virtual environment (excluded from repo)
-├── main.py                           # Your Flask app with Datadog + Vertex AI integration
+├── main.py                           # Flask app with Datadog + Vertex AI integration
 ├── README.md                         # Project overview, setup, and submission details
-├── requirements.txt                  # Python dependencies (currently empty — we’ll fix that)
-├── Connect-Datadog-with-docker.md    # Optional guide or notes (can be useful for judges)
+├── requirements.txt                  # Python dependencies
+├── Connect-Datadog-with-docker.md    # Optional guide or notes
 
-OpsVoice Assistant is a Flask-based backend service that:
+
+OpsVoice Assistant is a Flask‑based backend service that:
 - Accepts voice command requests (`/process-command`)
-- Simulates **speech-to-text** (Google STT)
-- Simulates **LLM analysis** (Vertex AI Gemini)
+- Simulates **speech‑to‑text** (Google STT)
+- Runs **LLM analysis** (Vertex AI Gemini)
 - Streams **traces, logs, and metrics** to **Datadog APM**
 - Provides **dashboards and monitors** for latency, errors, and downstream service health
-
-This project demonstrates how to combine **Google Cloud AI** with **Datadog observability** to build a reliable, production-ready AI application.
 
 ---
 
@@ -42,3 +41,39 @@ This project demonstrates how to combine **Google Cloud AI** with **Datadog obse
 ```bash
 git clone https://github.com/<your-username>/opsvoice-assistant.git
 cd opsvoice-assistant
+```
+
+2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+3. Run the Backend
+
+```bash
+python main.py
+```
+
+4. 🔍 Observability
+- Datadog Agent must be running locally (localhost:8126)
+- Logs include trace_id and span_id for correlation
+- Dashboards track latency, error rate, and model usage
+- Monitors can be configured for:
+- Latency thresholds
+- Error rate > 5%
+- Model usage anomalies
+
+
+5. 📡 API Endpoints
+- GET /status → Health check
+- GET /model-info → Gemini model list
+- POST /process-command → Voice command processing
+
+
+
+
+
+
+
+
