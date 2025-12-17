@@ -66,8 +66,8 @@ def ask_gemini(prompt_text: str) -> str:
     model = GenerativeModel("gemini-2.5-pro")
     chat = model.start_chat()
     response = chat.send_message(prompt_text)
-    logger.info(f"Gemini replied with - {response.candidates.content}")
-    return response.content    
+    logger.info(f"Gemini replied with - {response.text}")
+    return response.text    
 
 @app.route('/status', methods=['GET'])
 def health_check():
@@ -79,69 +79,69 @@ def health_check():
     return jsonify({"status": "healthy", "service": "opsvoice-backend"})
     
 @app.route('/model-info', methods=['GET'])
-@tracer.wrap(name="ai.model_info", service="vertex-ai-gemini")
 def list_gemini_models():
-    span = tracer.current_span()
-    trace_id = span.trace_id if span else "N/A"
-    span_id = span.span_id if span else "N/A"
-    logger.info(f"Listing Gemini models — trace_id={trace_id}, span_id={span_id}")
+    with tracer.trace("ai.model_info", service="vertex-ai-gemini") as span:
+        span = tracer.current_span()
+        trace_id = span.trace_id if span else "N/A"
+        span_id = span.span_id if span else "N/A"
+        logger.info(f"Listing Gemini models — trace_id={trace_id}, span_id={span_id}")
 
-    model_names = [
-        "gemini-2.0-flash-001",
-        "gemini-2.5-pro",
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-3-pro-preview"
-    ]
+        model_names = [
+            "gemini-2.0-flash-001",
+            "gemini-2.5-pro",
+            "gemini-2.5-flash",
+            "gemini-2.5-flash-lite",
+            "gemini-3-pro-preview"
+        ]
 
-    results = {}
-    for name in model_names:
-        try:
-            logger.info(f"Trying model: {name}")
-            model = GenerativeModel(name)
-            chat = model.start_chat()
-            response = chat.send_message("Hello Gemini!")
-
-            # Handle multi-part responses
-            text = None
+        results = {}
+        for name in model_names:
             try:
-                text = response.text
-            except Exception:
-                if hasattr(response, "candidates") and response.candidates:
-                    parts = []
-                    for c in response.candidates:
-                        if hasattr(c, "content") and hasattr(c.content, "parts"):
-                            for p in c.content.parts:
-                                if hasattr(p, "text"):
-                                    parts.append(p.text)
-                    text = "\n".join(parts) if parts else "No text available"
+                logger.info(f"Trying model: {name}")
+                model = GenerativeModel(name)
+                chat = model.start_chat()
+                response = chat.send_message("Hello Gemini!")
 
-            results[name] = {
-                "status": "success",
-                "sample": text[:200] if text else "No text"
-            }
+                # Handle multi-part responses
+                text = None
+                try:
+                    text = response.text
+                except Exception:
+                    if hasattr(response, "candidates") and response.candidates:
+                        parts = []
+                        for c in response.candidates:
+                            if hasattr(c, "content") and hasattr(c.content, "parts"):
+                                for p in c.content.parts:
+                                    if hasattr(p, "text"):
+                                        parts.append(p.text)
+                        text = "\n".join(parts) if parts else "No text available"
 
-            # ✅ Add Datadog tags
-            if span:
-                span.set_tag("model_name", name)
-                span.set_tag("status", "success")
-                span.set_tag("sample_length", len(text) if text else 0)
+                results[name] = {
+                    "status": "success",
+                    "sample": text[:200] if text else "No text"
+                }
 
-        except Exception as e:
-            logger.error(f"Model {name} failed: {e}")
-            results[name] = {"status": "error", "message": str(e)}
+                # ✅ Add Datadog tags
+                if span:
+                    span.set_tag("model_name", name)
+                    span.set_tag("status", "success")
+                    span.set_tag("sample_length", len(text) if text else 0)
 
-            # ✅ Add Datadog tags for errors
-            if span:
-                span.set_tag("model_name", name)
-                span.set_tag("status", "error")
-                span.set_tag("error.message", str(e))
+            except Exception as e:
+                logger.error(f"Model {name} failed: {e}")
+                results[name] = {"status": "error", "message": str(e)}
 
-    return jsonify({
-        "trace_id": trace_id,
-        "span_id": span_id,
-        "available_models": results
-    })
+                # ✅ Add Datadog tags for errors
+                if span:
+                    span.set_tag("model_name", name)
+                    span.set_tag("status", "error")
+                    span.set_tag("error.message", str(e))
+
+        return jsonify({
+            "trace_id": trace_id,
+            "span_id": span_id,
+            "available_models": results
+        })
 
 @app.route('/process-command', methods=['POST'])
 def process_voice_command():
@@ -169,4 +169,5 @@ def process_voice_command():
 
 if __name__ == '__main__':
     print("🤖 OpsVoice Backend Starting (Local Agent Mode)...", flush=True)
+    print(app.url_map)
     app.run(host='0.0.0.0', port=8080)

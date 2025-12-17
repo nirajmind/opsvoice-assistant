@@ -1,0 +1,46 @@
+graph TD
+    subgraph "1. USER ZONE (SRE Admin)"
+        SRE[👤 SRE User] -->|Voice Command via Mic| UI[Web Browser UI]
+        UI -->|Audio Response via Speaker| SRE
+    end
+
+    subgraph "2. GOOGLE CLOUD APP ZONE (Your Backend)"
+        %% FIXED LINE BELOW: Added double quotes around the label content
+        UI -->|1. Send Audio Blob| API["Backend API Service\n(e.g., Cloud Run / Python FastAPI)"]
+        API -->|8. Return Audio| UI
+        
+        MockLogs[(Sample Log Data\nCloud Storage/Firestore)]
+        
+        API -->|3. Retrieve relevant logs| MockLogs
+        MockLogs -->|4. Log context| API
+    end
+
+    subgraph "3. EXTERNAL AI & OBSERVABILITY SERVICES"
+        %% Google Cloud AI Services
+        API -->|2. Speech-to-Text API| STT[Google Cloud STT]
+        STT -->|Transcribed Text| API
+        
+        %% FIXED LINE BELOW: Added double quotes around the label content
+        API -->|5. Prompt + Logs Context| Vertex["Vertex AI (Gemini Pro)"]
+        Vertex -->|6. RCA & Solution Text| API
+        
+        %% ElevenLabs Partner Service
+        API -->|7. Send Text Response| Eleven[ElevenLabs TTS API]
+        Eleven -->|Synthetic Voice Audio| API
+        
+        %% Datadog Observability
+        DD[Datadog Platform]
+    end
+
+    %% TELEMETRY FLOWS (The Challenge Requirement)
+    %% Dotted lines represent traces, metrics, and logs sent to Datadog
+    API -.->|Trace: E2E Latency & Errors| DD
+    API -.->|Metric: Token Usage & Cost| DD
+    API -.->|Log: Detected Security Events| DD
+    Vertex -.->|Trace: Model Latency| DD
+
+    style API fill:#d1c4e9,stroke:#333,stroke-width:2px,color:black
+    style Vertex fill:#4285F4,stroke:none,color:white
+    style STT fill:#4285F4,stroke:none,color:white
+    style Eleven fill:#ff9900,stroke:none,color:white
+    style DD fill:#632ca6,stroke:none,color:white
